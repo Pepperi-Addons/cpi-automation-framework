@@ -1,24 +1,21 @@
-import ClientActionBase, { ActionExecutionResult } from "./clientActionsBase";
+import { NavigationActionExecutionResult } from "../constants";
+import ClientActionBase from "./clientActionsBase";
 //response class for navigate client action:
 //https://pepperi-addons.github.io/client-actions-docs/actions/navigation.html
 export default class ClientActionDialogTest extends ClientActionBase 
 {
-	executeAction(): Promise<ActionExecutionResult> 
+	
+	executeAction(): Promise<NavigationActionExecutionResult> 
 	{
 		return Promise.resolve({
-			success: this.data.Success,
-			resObject: {
-			},
+			EventKey: this.data.Value.Callback,
+			EventData: {}
 		});
 	}
 
-	negativeTest(): Promise<ActionExecutionResult>
+	negativeTest(): Promise<NavigationActionExecutionResult> 
 	{
-		return Promise.resolve({
-			success: false,
-			resObject: {
-				SelectedAction: "rand-negative-string-for-test",
-			},
-		});
+		throw new Error("Method not implemented.");
 	}
+
 }

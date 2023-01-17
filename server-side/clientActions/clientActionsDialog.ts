@@ -1,27 +1,25 @@
-import ClientActionBase, { ActionExecutionResult } from "./clientActionsBase";
+import { DialogActionExecutionResult } from "../constants";
+import ClientActionBase from "./clientActionsBase";
 //client actions class including responses for Dialog client actions
 export default class ClientActionDialogTest extends ClientActionBase 
 {
-	executeAction(): Promise<ActionExecutionResult>
+	executeAction(): Promise<DialogActionExecutionResult>
 	{
-
-		//response below is according to dialog responses:
-		//https://pepperi-addons.github.io/client-actions-docs/actions/dialog.html
 		return Promise.resolve({
-			success: this.data.Success,
-			resObject: {
-				SelectedAction: this.data.Value.Data.Actions[0].Key, // need to test
-			},
-		});
+			EventKey: this.data.Value.Callback,
+			EventData: {
+				SelectedAction: this.data.Value.Data.Actions[0].Key
+			}
+		})
 	}
 
-	negativeTest(): Promise<ActionExecutionResult>
+	negativeTest(): Promise<DialogActionExecutionResult>
 	{
 		return Promise.resolve({
-			success: false,
-			resObject: {
-				SelectedAction: "rand-negative-string-for-test",
-			},
-		});
+			EventKey: this.data.Value.Callback,
+			EventData: {
+				SelectedAction: "rand-negative-string-for-test"
+			}
+		})
 	}
 }

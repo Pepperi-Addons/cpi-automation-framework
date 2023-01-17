@@ -1,10 +1,9 @@
-import ClientActionBase, { ActionExecutionResult, IClientAction } from "./clientActionsBase";
+import { GeoLocationActionExecutionResult } from "../constants";
 import ClientActionGeoLocationTest from "./clientActionsGeoLocation";
 
 export default class ClientActionGeoLocationWithTimeoutTest extends ClientActionGeoLocationTest
 {
-
-	async executeAction(): Promise<ActionExecutionResult> 
+	async executeAction(): Promise<GeoLocationActionExecutionResult> 
 	{
 		await setTimeout(function()
 		{
@@ -14,8 +13,13 @@ export default class ClientActionGeoLocationWithTimeoutTest extends ClientAction
 		return super.executeAction();
 	}
 
-	negativeTest(): Promise<ActionExecutionResult> 
+	async negativeTest(): Promise<GeoLocationActionExecutionResult> 
 	{
-		throw new Error("Method not implemented.");
+		await setTimeout(function()
+		{
+			console.log("timeouting for GeoLocation Client"); 
+		}, 10000);//wait 10 seconds
+
+		return super.negativeTest();
 	}
 }

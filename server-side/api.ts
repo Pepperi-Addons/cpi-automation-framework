@@ -1,6 +1,7 @@
 import { Client, Request } from '@pepperi-addons/debug-server'
-import ClientActionBase, { ActionExecutionResult } from './clientActions/clientActionsBase';
+import ClientActionBase from './clientActions/clientActionsBase';
 import ClientActionDialogTest from './clientActions/clientActionsDialog';
+import { ActionExecutionResult } from './constants';
 import ClientActionFactory from './services/clientActionFactory';
 import { EventsService } from './services/events.service'
 
@@ -24,10 +25,20 @@ export async function test(client: Client, request: Request)
 
 class ClientActionFinish extends ClientActionBase
 {
-	executeAction(): Promise<ActionExecutionResult> {
-		return Promise.resolve({success: true, resObject: {}});
+	executeAction(): Promise<ActionExecutionResult> 
+	{
+
+		const result: ActionExecutionResult = {
+
+				EventKey: this.data.Value.Callback,
+				EventData: {}
+		};
+
+		return Promise.resolve(result);
 	}
-	negativeTest(): Promise<ActionExecutionResult> {
+
+	negativeTest(): Promise<ActionExecutionResult> 
+	{
 		throw new Error('Method not implemented.');
 	}
 

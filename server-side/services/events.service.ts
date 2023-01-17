@@ -1,4 +1,4 @@
-import { IClientAction } from "../clientActions/clientActionsBase";
+import ClientActionBase from "../clientActions/clientActionsBase";
 import FetchService from "./fetch.service";
 import ClientActionFactory from "./clientActionFactory";
 import jwtDecode from "jwt-decode";
@@ -44,13 +44,13 @@ export class EventsService
 		while(!accessToken)
 		{
 			const res = await this.fetchService.post(url, body)
-      accessToken = res["AccessToken"];
+			accessToken = res["AccessToken"];
 		}
 
 		return accessToken;
 	}
 
-  async getWebAPIBaseURL(): Promise<string>
+	async getWebAPIBaseURL(): Promise<string>
 	{
 		let environment = jwtDecode(this.client.OAuthAccessToken)["pepperi.datacenter"];
 
@@ -77,28 +77,24 @@ export class EventsService
 	async runEventLoop( webAPIBaseURL: string, accessToken: string, initialEventBody: any ): Promise<void> 
 	{
 		const eventResponse = await this.emitEvent(webAPIBaseURL, accessToken, initialEventBody);
+		console.log(eventResponse);
 
 		const clientActionRequest = eventResponse.Value;
-		console.log(eventResponse);
 		//stop condition -- if actions returns empty recursion returns to the previous iteration
 		if (Object.entries(clientActionRequest).length === 0) 
 		{
 			return;
 		} // note that the callback EmitEvent does not return any values;
 
-		const action: IClientAction = ClientActionFactory.getClientActionInstance(eventResponse);
-		const resTest = await action.executeAction();
+		const action: ClientActionBase = ClientActionFactory.getClientActionInstance(eventResponse);
+		const actionResult = await action.executeAction();
 
-		const testedOptions = {
-			EventKey: clientActionRequest.Callback,
-			EventData: resTest.resObject,
-		};
-		if (Object.entries(resTest.resObject).length === 0) 
+		if (Object.entries(actionResult.EventData).length === 0) 
 		{
 			return;
 		}
 
-		await this.runEventLoop(webAPIBaseURL, accessToken, testedOptions);
+		await this.runEventLoop(webAPIBaseURL, accessToken, actionResult);
 	}
 
 

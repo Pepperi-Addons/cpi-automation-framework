@@ -1,29 +1,34 @@
-import ClientActionBase, { ActionExecutionResult } from "./clientActionsBase";
+import { ScanBarcodeActionExecutionResult } from "../constants";
+import ClientActionBase from "./clientActionsBase";
 //client actions barcode scan class for responses:
 //https://pepperi-addons.github.io/client-actions-docs/actions/scan-barcode.html
 export default class ClientActionBarcodeScanTest extends ClientActionBase 
 {
-	executeAction(): Promise<ActionExecutionResult> 
+	executeAction(): Promise<ScanBarcodeActionExecutionResult> 
 	{
-		return Promise.resolve({
-			success: this.data.Success,
-			resObject: {
+		const result: ScanBarcodeActionExecutionResult = {
+			EventKey: this.data.Value.Callback,
+			EventData: {
 				Success: this.data.Success,
 				Barcode: 12345678,
-				ErrorMessage: "",
-			},
-		});
+				ErrorMessage: ""
+			}
+		};
+
+		return Promise.resolve(result);
 	}
 
-	negativeTest(): Promise<ActionExecutionResult> 
+	negativeTest(): Promise<ScanBarcodeActionExecutionResult> 
 	{
-		return Promise.resolve({
-			success: false,
-			resObject: {
+		const result: ScanBarcodeActionExecutionResult = {
+			EventKey: this.data.Value.Callback,
+			EventData: {
 				Success: false,
-				Barcode: 910111213,
-				ErrorMessage: "Failure for automation test",
-			},
-		});
+				Barcode: 12345678,
+				ErrorMessage: "UserCanceled"
+			}
+		};
+
+		return Promise.resolve(result);
 	}
 }

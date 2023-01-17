@@ -1,5 +1,7 @@
+import { ActionExecutionResult } from "../constants";
+
 //https://pepperi-addons.github.io/client-actions-docs/
-export default abstract class ClientActionBase implements IClientAction
+export default abstract class ClientActionBase
 {
 
 	constructor(protected data: any)
@@ -11,14 +13,3 @@ export default abstract class ClientActionBase implements IClientAction
 
 }
 
-export interface IClientAction
-{
-    executeAction(): Promise<ActionExecutionResult>;
-
-    negativeTest(): Promise<ActionExecutionResult>;
-}
-
-export interface ActionExecutionResult
-{
-  success: boolean; resObject: any
-}

@@ -1,4 +1,5 @@
-import ClientActionBase, { ActionExecutionResult } from "./clientActionsBase";
+import { GeoLocationActionExecutionResult } from "../constants";
+import ClientActionBase from "./clientActionsBase";
 
 /** account geo data for tests */
 //class for geo location client action responses:
@@ -52,31 +53,33 @@ const accountDataArr: accountGeoData[] = [
 
 export default class ClientActionGeoLocationTest extends ClientActionBase 
 {
-	executeAction(): Promise<ActionExecutionResult> 
+	executeAction(): Promise<GeoLocationActionExecutionResult> 
 	{
 		const randIndex = Math.floor(Math.random() * 3) + 1;
 		const randAccuracy = Math.floor(Math.random() * 100) + 1;
+
 		return Promise.resolve({
-			success: this.data.Success,
-			resObject: {
+			EventKey: this.data.Value.Callback,
+			EventData: {
 				Success: this.data.Success,
-				Longitude: accountDataArr[randIndex].Longitude,
-				Latitude: accountDataArr[randIndex].Latitude,
+				Longitude: accountDataArr[randIndex].Longitude!,
+				Latitude: accountDataArr[randIndex].Latitude!,
 				Accuracy: randAccuracy,
-			},
+			}
 		});
 	}
 
-	negativeTest(): Promise<ActionExecutionResult>
+	negativeTest(): Promise<GeoLocationActionExecutionResult>
 	{
 		return Promise.resolve({
-			success: false,
-			resObject: {
-				Success: false,
+			EventKey: this.data.Value.Callback,
+			EventData: {
+				Success: this.data.false,
 				Longitude: 0,
 				Latitude: 0,
 				Accuracy: 0,
-			},
+				ErrorMessage: "Error"
+			}
 		});
 	}
 }

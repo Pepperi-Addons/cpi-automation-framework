@@ -6,35 +6,37 @@ export default class FetchService
 	async post(url: string, body?: any, headers?:{[key: string]: string}): Promise<any>
 	{
 		const bodyStr = JSON.stringify(body);
-        const mergedHeaders = {
-            ...headers,
-            "Content-Type": "application/json",
-        }
-        const fetchResult = await fetch(url, {
+		const mergedHeaders = {
+			...headers,
+			"Content-Type": "application/json",
+		}
+		const fetchResult = await fetch(url, {
 			method: "POST",
 			body: bodyStr,
 			headers: mergedHeaders,
 		});
 
-        const buff = await fetchResult.arrayBuffer().then(Buffer.from);
+		const buff = await fetchResult.arrayBuffer().then(Buffer.from);
 
-        try
-        {
-            return JSON.parse(buff.toString())
-        } catch (err) {
-            throw new Error(`Failed to POST: ${err instanceof Error ? err.message : "Unknown error occurred."}`);
-        }
+		try
+		{
+			return JSON.parse(buff.toString())
+		}
+		catch (err) 
+		{
+			throw new Error(`Failed to POST: ${err instanceof Error ? err.message : "Unknown error occurred."}`);
+		}
 	}
 
-    async postEvent(url: string, body?: any, headers?:{[key: string]: string}): Promise<any>
-    {
-        const bodyCopy = deepClone(body);
-        bodyCopy.EventData = JSON.stringify(bodyCopy.EventData);
+	async postEvent(url: string, body?: any, headers?:{[key: string]: string}): Promise<any>
+	{
+		const bodyCopy = deepClone(body);
+		bodyCopy.EventData = JSON.stringify(bodyCopy.EventData);
 
-        const postRes = await this.post(url, bodyCopy, headers);
+		const postRes = await this.post(url, bodyCopy, headers);
 
-        postRes.Value = JSON.parse(postRes.Value);
+		postRes.Value = JSON.parse(postRes.Value);
 
-        return postRes;
-    }
+		return postRes;
+	}
 }

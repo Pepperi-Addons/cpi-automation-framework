@@ -1,4 +1,5 @@
-import ClientActionBase, { IClientAction } from "../clientActions/clientActionsBase";
+import ClientActionBase from "../clientActions/clientActionsBase";
+import { ClientActionBaseReference } from "../constants";
 
 export default class ClientActionFactory
 {
@@ -12,7 +13,7 @@ export default class ClientActionFactory
      * 
      * ClientActionFactory.clientActionClasses = [clientActionDialog, clientActionGeoLocation];
      */
-	public static clientActionClasses: Array<Pick<typeof ClientActionBase, keyof typeof ClientActionBase> & (new(data) => IClientAction)> = []
+	public static clientActionClasses: Array<ClientActionBaseReference> = []
 
 	/**
      * Create an instance of the class in index 0 of the ClientActionFactory.clientActionClasses array.
@@ -20,11 +21,11 @@ export default class ClientActionFactory
      * @param data 
      * @returns 
      */
-	public static getClientActionInstance(data: any): IClientAction
+	public static getClientActionInstance(data: any): ClientActionBase
 	{
 		let errorMessage = ''
-        
-        if(!ClientActionFactory.clientActionClasses)
+
+		if(!ClientActionFactory.clientActionClasses)
 		{
 			errorMessage = "ClientActionFactory.clientActionClasses is undefined."
 		}
@@ -33,10 +34,10 @@ export default class ClientActionFactory
 			errorMessage = "ClientActionFactory.clientActionClasses is empty.";
 		}
 
-        if(errorMessage)
-        {
-            throw new Error(`${errorMessage}\nGot the following client action request: ${JSON.stringify(data)}`);
-        }
+		if(errorMessage)
+		{
+			throw new Error(`${errorMessage}\nGot the following client action request: ${JSON.stringify(data)}`);
+		}
         
 		// Pop the first client action class
 		const clientActionType = ClientActionFactory.clientActionClasses.shift()!;
