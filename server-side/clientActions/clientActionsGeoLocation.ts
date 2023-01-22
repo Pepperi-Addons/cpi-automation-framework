@@ -1,9 +1,6 @@
 import { GeoLocationActionExecutionResult } from "../constants";
 import ClientActionBase from "./clientActionsBase";
 
-/** account geo data for tests */
-//class for geo location client action responses:
-//https://pepperi-addons.github.io/client-actions-docs/actions/geo-location.html
 interface accountGeoData {
   City: string;
   Country: string;

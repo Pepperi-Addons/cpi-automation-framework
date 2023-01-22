@@ -1,7 +1,7 @@
 import { NavigationActionExecutionResult } from "../constants";
 import ClientActionBase from "./clientActionsBase";
-//response class for navigate client action:
-//https://pepperi-addons.github.io/client-actions-docs/actions/navigation.html
+
+
 export default class ClientActionDialogTest extends ClientActionBase 
 {
 	

@@ -1,6 +1,7 @@
 import { DialogActionExecutionResult } from "../constants";
 import ClientActionBase from "./clientActionsBase";
-//client actions class including responses for Dialog client actions
+
+
 export default class ClientActionDialogTest extends ClientActionBase 
 {
 	executeAction(): Promise<DialogActionExecutionResult>

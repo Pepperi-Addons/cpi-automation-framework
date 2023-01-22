@@ -2,7 +2,21 @@ import ClientActionBase from "./clientActions/clientActionsBase";
 
 export type ClientActionBaseReference = Pick<typeof ClientActionBase, keyof typeof ClientActionBase> & (new (data) => ClientActionBase);
 
-export interface ActionExecutionResult {
+export interface EventResponse {
+    ErrorCode: string;
+    ErrorMessage: string,
+    Success: boolean,
+    Value: ClientAction
+}
+
+export interface ClientAction 
+{
+  Callback: string; //callback UUID
+  Type: string; //action Type
+  Data?: any; //Not mandatory due to barcode not having this
+}
+
+export interface Event {
     EventKey: string;
     EventData: { [key: string]: any };
 }
@@ -11,7 +25,7 @@ export interface ActionExecutionResult {
  * Dialog action execution result is defined here:
  * https://pepperi-addons.github.io/client-actions-docs/actions/dialog.html
  */
-export interface DialogActionExecutionResult extends ActionExecutionResult {
+export interface DialogActionExecutionResult extends Event {
     EventData: {
         SelectedAction: string,
         [key: string]: any
@@ -22,7 +36,7 @@ export interface DialogActionExecutionResult extends ActionExecutionResult {
  * GeoLocation action execution result is defined here:
  * https://pepperi-addons.github.io/client-actions-docs/actions/geo-location.html
  */
-export interface GeoLocationActionExecutionResult extends ActionExecutionResult {
+export interface GeoLocationActionExecutionResult extends Event {
     EventData: {
         Success: boolean,
         Longitude: number,
@@ -37,7 +51,7 @@ export interface GeoLocationActionExecutionResult extends ActionExecutionResult 
  * HUD action execution result is defined here:
  * https://pepperi-addons.github.io/client-actions-docs/actions/hud.html
  */
-export interface HUDActionExecutionResult extends ActionExecutionResult {
+export interface HUDActionExecutionResult extends Event {
     EventData: {
         Success: boolean,
         HUDKey?: string,
@@ -49,7 +63,7 @@ export interface HUDActionExecutionResult extends ActionExecutionResult {
 * Navigation action execution result is defined here:
 * https://pepperi-addons.github.io/client-actions-docs/actions/navigation.html
 */
-export interface NavigationActionExecutionResult extends ActionExecutionResult {
+export interface NavigationActionExecutionResult extends Event {
     EventData: {}
 }
 
@@ -57,7 +71,7 @@ export interface NavigationActionExecutionResult extends ActionExecutionResult {
 * Scan barcode action execution result is defined here:
 * https://pepperi-addons.github.io/client-actions-docs/actions/scan-barcode.html
 */
-export interface ScanBarcodeActionExecutionResult extends ActionExecutionResult {
+export interface ScanBarcodeActionExecutionResult extends Event {
     EventData: {
         Success: boolean,
         Barcode: number,
@@ -70,7 +84,7 @@ export interface ScanBarcodeActionExecutionResult extends ActionExecutionResult 
  * Modal action execution result is defined here:
  * https://pepperi-addons.github.io/client-actions-docs/actions/modal.html
  */
- export interface ModalActionExecutionResult extends ActionExecutionResult {
+ export interface ModalActionExecutionResult extends Event {
     EventData: {
         Result: any,
         Canceled: boolean
@@ -82,7 +96,7 @@ export interface ScanBarcodeActionExecutionResult extends ActionExecutionResult 
  * File Picker action execution result is defined here:
  * https://pepperi-addons.github.io/client-actions-docs/actions/file-picker.html
  */
- export interface FilePickerActionExecutionResult extends ActionExecutionResult {
+ export interface FilePickerActionExecutionResult extends Event {
     EventData: {
         Success: boolean,
         MimeType: string,

@@ -1,166 +1,118 @@
 import ClientActionBase from "../clientActions/clientActionsBase";
 import FetchService from "./fetch.service";
-import ClientActionFactory from "./clientActionFactory";
-import jwtDecode from "jwt-decode";
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { PapiClient } from "@pepperi-addons/papi-sdk";
+import { ClientActionBaseReference, Event, EventResponse } from "../constants";
+import CpiSessionService from "./cpiSession.service";
+import deepClone from 'lodash.clonedeep'
+
 
 //https://pepperi-addons.github.io/client-actions-docs/
-
-export interface ClientAction 
-{
-  Callback: string; //callback UUID
-  Type: string; //action Type
-  Data?: any; //Not mandatory due to barcode not having this
-}
 
 export class EventsService 
 {
 	protected fetchService: FetchService;
-	protected papiClient: PapiClient;
+	protected cpiSession: CpiSessionService;
 
-	private readonly WEB_API_ADDON_UUID = "00000000-0000-0000-0000-0000003eba91";
-
-	constructor(protected client: Client)
+	constructor(protected client: Client, protected clientActionClasses: Array<ClientActionBaseReference>)
 	{
 		this.fetchService = new FetchService();
-
-		this.papiClient =  new PapiClient({
-			baseURL: client.BaseURL,
-			token: client.OAuthAccessToken,
-			addonUUID: client.AddonUUID,
-			actionUUID: client.ActionUUID,
-			addonSecretKey: client.AddonSecretKey,
-		});
+		this.cpiSession = new CpiSessionService(client, this.fetchService);
 	}
 
-	async getAccessToken(webAPIBaseURL: string): Promise<string> 
+	/**
+    Asynchronously executes an event sequence.
+    @param {Event} eventBody - The event to be executed.
+    @return {Promise<Event | EventResponse>} A promise that resolves to the final event in the 
+	sequence (in case the last client action does not emit an event) or the final event response.
+    */	public async executeEventSequence(eventBody: Event): Promise<Event | EventResponse> 
 	{
-		const url = webAPIBaseURL + "/Service1.svc/v1/CreateSession";
-		const body = { "accessToken": this.client.OAuthAccessToken, "culture": "en-US" };
-
-		let accessToken = undefined;
-
-		while(!accessToken)
-		{
-			const res = await this.fetchService.post(url, body)
-			accessToken = res["AccessToken"];
-		}
-
-		return accessToken;
-	}
-
-	async getWebAPIBaseURL(): Promise<string>
-	{
-		let environment = jwtDecode(this.client.OAuthAccessToken)["pepperi.datacenter"];
-
-		const webappAddon = await this.papiClient.addons.installedAddons.addonUUID(this.WEB_API_ADDON_UUID).get();
-		environment = environment == "sandbox" ? "sandbox." : "";
-
-		const baseURL = `https://webapi.${environment}pepperi.com/${webappAddon.Version}/webapi`;
-
-		return baseURL;
-	}
-
-	//basic emitEvent endpoint - emits an event on cpi-level
-	async emitEvent(webAPIBaseURL: string, accessToken: string, body: any) 
-	{
-		const url = `${webAPIBaseURL}/Service1.svc/v1/EmitEvent`;
-		const headers = { PepperiSessionToken: accessToken };
-
-		const emitEvent = await this.fetchService.postEvent(url, body, headers);
-
-		return emitEvent;
-	}
-
-	//client actions event loops for positive tests -> recursive function that call the interceptors for client actions related tests
-	async runEventLoop( webAPIBaseURL: string, accessToken: string, initialEventBody: any ): Promise<void> 
-	{
-		const eventResponse = await this.emitEvent(webAPIBaseURL, accessToken, initialEventBody);
+		const eventResponse = await this.postEvent(eventBody);
 		console.log(eventResponse);
 
 		const clientActionRequest = eventResponse.Value;
 		//stop condition -- if actions returns empty recursion returns to the previous iteration
-		if (Object.entries(clientActionRequest).length === 0) 
+		if (Object.entries(clientActionRequest).length === 0 || clientActionRequest.Type === 'Finish') 
 		{
-			return;
+			this.validateEndOfClientActionsLoop();
+			return eventResponse;
 		} // note that the callback EmitEvent does not return any values;
 
-		const action: ClientActionBase = ClientActionFactory.getClientActionInstance(eventResponse);
-		const actionResult = await action.executeAction();
+		const action: ClientActionBase = this.getClientActionInstance(eventResponse);
+		const actionResult: Event = await action.executeAction();
 
 		if (Object.entries(actionResult.EventData).length === 0) 
 		{
-			return;
+			this.validateEndOfClientActionsLoop();
+			return actionResult;
 		}
 
-		await this.runEventLoop(webAPIBaseURL, accessToken, actionResult);
+		return await this.executeEventSequence(actionResult);
 	}
 
+	/**
+    Checks if the ClientActionFactory's clientActionClasses array is empty.
+    If it is not empty, an error is thrown with the number of actions left in the queue.
+    @throws Error if ClientActionFactory.clientActionClasses is not empty
+    */
+	protected validateEndOfClientActionsLoop(): void
+	{
+		if(this.clientActionClasses?.length > 0)
+		{
+			const numberOfActionsLeft = this.clientActionClasses.length;
+			throw new Error(`ClientActionFactory.clientActionClasses is not empty (${numberOfActionsLeft} action(s) left in the queue) even though there are no further actions.`);
+		}
+	}
 
-	//function for emitting client event with somewhat of a timeout
-	// async EmitClientEventWithTimeout( webAPIBaseURL: string, accessToken: string, options): Promise<void> 
-	// {
-	// 	const map = global["map"] as Map<string, any>;
-	// 	const res = await this.EmitEvent(webAPIBaseURL, accessToken, options);
-	// 	const parsedActions = JSON.parse(res.Value);
-	// 	console.log(parsedActions);
-	// 	const Type = parsedActions.Type;
-	// 	//stop condition -- if actions returns empty recursion returns to the previous iteration
-	// 	if (Object.entries(parsedActions).length === 0) 
-	// 	{
-	// 		return;
-	// 	} // note that the callback EmitEvent does not return any values;
-	// 	const action = (await this.generateClientActionWithTimeout(
-	// 		res
-	// 	)) as ClientActionBase;
-	// 	const parsedData = await this.parseActionDataForTest(action.data);
-	// 	switch (Type) 
-	// 	{
-	// 	case "GeoLocation":
-	// 		map.set(parsedActions.Callback, action.data);
-	// 		break;
-	// 	default:
-	// 		break;
-	// 	}
-	// 	const resTest = await action.executeAction(action.data);
-	// 	const result = resTest.resObject;
-	// 	const testedOPtions = {
-	// 		EventKey: parsedActions.Callback,
-	// 		EventData: JSON.stringify(result),
-	// 	};
-	// 	global["map"] = map;
-	// 	if (Object.entries(result).length === 0) 
-	// 	{
-	// 		return;
-	// 	}
-	// 	await this.EmitClientEvent(webAPIBaseURL, accessToken, testedOPtions);
-	// }
+	/**
+    Asynchronously posts an event to the server.
+    @param {Event} event - The event to be posted.
+    @return {Promise<EventResponse>} A promise that resolves to the server's response to the posted event.
+    */
+	protected async postEvent(event: Event): Promise<EventResponse>
+	{
+		const url = `${await this.cpiSession.webApiBaseUrl}/Service1.svc/v1/EmitEvent`;
 
+		const headers = { PepperiSessionToken: await this.cpiSession.accessToken };
 
-	// //generates client action class with timeout
-	// async generateClientActionWithTimeout(data: any): Promise<ClientActionBase> 
-	// {
-	// 	const Data = data;
-	// 	const value = JSON.parse(Data.Value);
-	// 	const actionType = value.Type;
-	// 	let action;
-	// 	switch (actionType) 
-	// 	{
-	// 	case "GeoLocation":
-	// 		action = new ClientActionGeoLocationWithTimeoutTest(Data, actionType);
-	// 		break;
-	// 	default:
-	// 		break;
-	// 	}
-	// 	return action;
-	// }
+		const eventCopy = deepClone(event);
 
-	//parsing data for test
-	// async parseActionDataForTest(data: string)
-	// {
-	// 	const parsedData = JSON.parse(data);
-	// 	const parsedValue = JSON.parse(parsedData.Value);
-	// 	return parsedValue;
-	// }
+		eventCopy.EventData = JSON.stringify(eventCopy.EventData);
+
+		const postRes = await this.fetchService.post(url, eventCopy, headers);
+
+		postRes.Value = JSON.parse(postRes.Value);
+
+		return postRes;
+	}
+
+	/**
+     * Create an instance of the class in index 0 of the ClientActionFactory.clientActionClasses array.
+     * The reference on the 0 index is popped from the array.
+     * @param data 
+     * @returns 
+     */
+	 protected getClientActionInstance(data: any): ClientActionBase
+	 {
+		 let errorMessage = ''
+ 
+		 if(!this.clientActionClasses)
+		 {
+			 errorMessage = "ClientActionFactory.clientActionClasses is undefined."
+		 }
+		 else if(this.clientActionClasses.length === 0)
+		 {
+			 errorMessage = "ClientActionFactory.clientActionClasses is empty.";
+		 }
+ 
+		 if(errorMessage)
+		 {
+			 throw new Error(`${errorMessage}\nGot the following client action request: ${JSON.stringify(data)}`);
+		 }
+		 
+		 // Pop the first client action class
+		 const clientActionType = this.clientActionClasses.shift()!;
+		 const clientActionInstance = new clientActionType(data);
+ 
+		 return clientActionInstance;
+	 }
 }
