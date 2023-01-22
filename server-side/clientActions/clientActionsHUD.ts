@@ -6,11 +6,6 @@ export default class ClientActionHUDTest extends ClientActionBase
 {	
 	private static hudUuid = uuidCreator();
 	
-	negativeTest(): Promise<HUDActionExecutionResult> 
-	{
-		throw new Error("Method not implemented.");
-	}
-	
 	async executeAction(): Promise<HUDActionExecutionResult> 
 	{
 		const resObject: HUDActionExecutionResult = {
@@ -25,6 +20,6 @@ export default class ClientActionHUDTest extends ClientActionBase
 			resObject.EventData.HUDKey = ClientActionHUDTest.hudUuid;
 		}
 
-		return resObject;
+		return Promise.resolve(resObject);
 	}
 }

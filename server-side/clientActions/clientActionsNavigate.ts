@@ -7,15 +7,11 @@ export default class ClientActionDialogTest extends ClientActionBase
 	
 	executeAction(): Promise<NavigationActionExecutionResult> 
 	{
-		return Promise.resolve({
+		const result: NavigationActionExecutionResult = {
 			EventKey: this.data.Value.Callback,
 			EventData: {}
-		});
-	}
+		}
 
-	negativeTest(): Promise<NavigationActionExecutionResult> 
-	{
-		throw new Error("Method not implemented.");
+		return Promise.resolve(result);
 	}
-
 }

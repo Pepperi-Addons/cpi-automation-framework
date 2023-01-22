@@ -12,14 +12,4 @@ export default class ClientActionGeoLocationWithTimeoutTest extends ClientAction
 
 		return super.executeAction();
 	}
-
-	async negativeTest(): Promise<GeoLocationActionExecutionResult> 
-	{
-		await setTimeout(function()
-		{
-			console.log("timeouting for GeoLocation Client"); 
-		}, 10000);//wait 10 seconds
-
-		return super.negativeTest();
-	}
 }

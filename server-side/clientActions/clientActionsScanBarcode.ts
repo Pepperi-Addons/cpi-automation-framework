@@ -17,18 +17,4 @@ export default class ClientActionBarcodeScanTest extends ClientActionBase
 
 		return Promise.resolve(result);
 	}
-
-	negativeTest(): Promise<ScanBarcodeActionExecutionResult> 
-	{
-		const result: ScanBarcodeActionExecutionResult = {
-			EventKey: this.data.Value.Callback,
-			EventData: {
-				Success: false,
-				Barcode: 12345678,
-				ErrorMessage: "UserCanceled"
-			}
-		};
-
-		return Promise.resolve(result);
-	}
 }

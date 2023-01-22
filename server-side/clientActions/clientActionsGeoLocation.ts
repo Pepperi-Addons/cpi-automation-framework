@@ -55,7 +55,7 @@ export default class ClientActionGeoLocationTest extends ClientActionBase
 		const randIndex = Math.floor(Math.random() * 3) + 1;
 		const randAccuracy = Math.floor(Math.random() * 100) + 1;
 
-		return Promise.resolve({
+		const result: GeoLocationActionExecutionResult = {
 			EventKey: this.data.Value.Callback,
 			EventData: {
 				Success: this.data.Success,
@@ -63,20 +63,8 @@ export default class ClientActionGeoLocationTest extends ClientActionBase
 				Latitude: accountDataArr[randIndex].Latitude!,
 				Accuracy: randAccuracy,
 			}
-		});
-	}
+		};
 
-	negativeTest(): Promise<GeoLocationActionExecutionResult>
-	{
-		return Promise.resolve({
-			EventKey: this.data.Value.Callback,
-			EventData: {
-				Success: this.data.false,
-				Longitude: 0,
-				Latitude: 0,
-				Accuracy: 0,
-				ErrorMessage: "Error"
-			}
-		});
+		return Promise.resolve(result);
 	}
 }

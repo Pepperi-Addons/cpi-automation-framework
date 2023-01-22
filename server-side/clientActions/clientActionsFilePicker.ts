@@ -17,10 +17,4 @@ export default class ClientActionModalTest extends ClientActionBase
 
 		return Promise.resolve(result);
 	}
-
-	negativeTest(): Promise<FilePickerActionExecutionResult> 
-	{
-		throw new Error("Method not implemented.");
-	}
-
 }

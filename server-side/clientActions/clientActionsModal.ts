@@ -23,10 +23,4 @@ export default class ClientActionModalTest extends ClientActionBase
 
 		return Promise.resolve(result);
 	}
-
-	negativeTest(): Promise<ModalActionExecutionResult> 
-	{
-		throw new Error("Method not implemented.");
-	}
-
 }
