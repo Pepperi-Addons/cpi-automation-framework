@@ -2,6 +2,13 @@ import ClientActionBase from "./clientActions/clientActionsBase";
 
 export type ClientActionBaseReference = Pick<typeof ClientActionBase, keyof typeof ClientActionBase> & (new (data) => ClientActionBase);
 
+/**
+An interface representing a response from an event.
+@property {string} ErrorCode - The error code of the event, if any.
+@property {string} ErrorMessage - The error message of the event, if any.
+@property {boolean} Success - A flag indicating whether the event was successful or not.
+@property {ClientAction} Value - The value of the event, if any.
+*/
 export interface EventResponse {
     ErrorCode: string;
     ErrorMessage: string,
@@ -9,11 +16,17 @@ export interface EventResponse {
     Value: ClientAction
 }
 
+/**
+An interface representing an event callback.
+@property {string} Callback - The callback UUID.
+@property {string} Type - The type of the client action.
+@property {Object} Data - (Optional) Additional data associated with the client action. This is an object where the key is a string and the value can be of any type.
+*/
 export interface ClientAction 
 {
-  Callback: string; //callback UUID
-  Type: string; //action Type
-  Data?: any; //Not mandatory due to barcode not having this
+  Callback: string;
+  Type: string;
+  Data?: { [key: string]: any };
 }
 
 export interface Event {
