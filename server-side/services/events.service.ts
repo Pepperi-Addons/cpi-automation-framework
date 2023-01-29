@@ -15,7 +15,7 @@ export class EventsService
 	protected cpiSession: CpiSessionService;
 	protected isRegisteredToUserEvents = false;
 
-	constructor(protected client: Client, protected clientActionClasses: Array<ClientActionAndConstructorData>, protected userEvents: Array<string> = [])
+	constructor(protected client: Client, protected clientActionClasses: Array<ClientActionAndConstructorData>)
 	{
 		this.fetchService = new FetchService();
 		this.cpiSession = new CpiSessionService(client, this.fetchService);
@@ -125,7 +125,10 @@ export class EventsService
 	{
 		if(!this.isRegisteredToUserEvents)
 		{
-			const eventData = { UserEvents : this.userEvents };
+			const constructorsData = this.clientActionClasses.map(classReference => classReference[1]);
+			const constructorsDataWithUserEvent = constructorsData.filter(constructorData => constructorData.hasOwnProperty("UserEventName"));
+			const userEventNames = constructorsDataWithUserEvent.map(constructorData => constructorData.UserEventName);
+			const eventData = { UserEvents : userEventNames};
 
 			const event: Event = {
 				EventKey: "AddonAPI",

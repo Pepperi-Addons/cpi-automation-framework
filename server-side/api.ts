@@ -10,9 +10,7 @@ export async function test(client: Client, request: Request)
 																		[ClientActionDialogTest, {}],
 																		[ClientActionUserEvent, {UserEventName: "OnSurveyViewLoad"}]
 																	]
-	const expectedUserEvents: Array<string> = ["OnSurveyDataLoad", "OnSurveyViewLoad"];
-
-	const eventsService = new EventsService(client, clientActionsArray, expectedUserEvents);
+	const eventsService = new EventsService(client, clientActionsArray);
 
 	const initialEventBody: Event = {
 		EventKey: "OnClientSurveyLoad",
