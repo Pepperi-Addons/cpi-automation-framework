@@ -1,10 +1,13 @@
-import { Event } from "../constants";
+import { Event, EventResponse } from "../constants";
 
 export default abstract class ClientActionBase
 {
-
-	constructor(protected data: any, protected constructorData: any)
+	constructor(protected data: EventResponse, protected constructorData: any)
 	{}
   
   abstract executeAction(): Promise<Event>;
+  static getUserEventName: () => string = () => 
+  {
+  	return ""
+  };
 }

@@ -15,7 +15,7 @@ export default class ClientActionHUDTest extends ClientActionBase
 			}
 		}
 
-		if(this.data.value.Data.State === "Show")
+		if(this.data.Value.Data?.State === "Show")
 		{
 			resObject.EventData.HUDKey = ClientActionHUDTest.hudUuid;
 		}

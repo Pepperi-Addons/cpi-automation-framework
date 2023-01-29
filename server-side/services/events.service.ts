@@ -1,7 +1,8 @@
+import { AddonUUID } from '../../addon.config.json'
 import ClientActionBase from "../clientActions/clientActionsBase";
 import FetchService from "./fetch.service";
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { ClientActionBaseReference, Event, EventResponse } from "../constants";
+import { ClientActionAndConstructorData, Event, EventResponse } from "../constants";
 import CpiSessionService from "./cpiSession.service";
 import deepClone from 'lodash.clonedeep'
 
@@ -12,8 +13,9 @@ export class EventsService
 {
 	protected fetchService: FetchService;
 	protected cpiSession: CpiSessionService;
+	protected isRegisteredToUserEvents = false;
 
-	constructor(protected client: Client, protected clientActionClasses: Array<ClientActionBaseReference>)
+	constructor(protected client: Client, protected clientActionClasses: Array<ClientActionAndConstructorData>, protected userEvents: Array<string> = [])
 	{
 		this.fetchService = new FetchService();
 		this.cpiSession = new CpiSessionService(client, this.fetchService);
@@ -24,18 +26,21 @@ export class EventsService
     @param {Event} eventBody - The event to be executed.
     @return {Promise<Event | EventResponse>} A promise that resolves to the final event in the 
 	sequence (in case the last client action does not emit an event) or the final event response.
-    */	public async executeEventSequence(eventBody: Event): Promise<Event | EventResponse> 
+    */	public async executeEventsSequence(eventBody: Event): Promise<Event | EventResponse> 
 	{
+		await this.registerToUserEventsIfNecessary();
+
 		const eventResponse = await this.postEvent(eventBody);
 		console.log(eventResponse);
 
 		const clientActionRequest = eventResponse.Value;
-		//stop condition -- if actions returns empty recursion returns to the previous iteration
-		if (Object.entries(clientActionRequest).length === 0 || clientActionRequest.Type === 'Finish') 
+
+
+		if (Object.entries(clientActionRequest).length === 0 /*|| clientActionRequest.Type === 'Finish'*/) 
 		{
 			this.validateEndOfClientActionsLoop();
 			return eventResponse;
-		} // note that the callback EmitEvent does not return any values;
+		}
 
 		const action: ClientActionBase = this.getClientActionInstance(eventResponse);
 		const actionResult: Event = await action.executeAction();
@@ -46,7 +51,7 @@ export class EventsService
 			return actionResult;
 		}
 
-		return await this.executeEventSequence(actionResult);
+		return await this.executeEventsSequence(actionResult);
 	}
 
 	/**
@@ -111,8 +116,34 @@ export class EventsService
 		 
 		 // Pop the first client action class
 		 const clientActionType = this.clientActionClasses.shift()!;
-		 const clientActionInstance = new clientActionType(data);
+		 const clientActionInstance = new clientActionType[0](data, clientActionType[1]);
  
 		 return clientActionInstance;
 	 }
+
+	protected async registerToUserEventsIfNecessary() 
+	{
+		if(!this.isRegisteredToUserEvents)
+		{
+			const eventData = { UserEvents : this.userEvents };
+
+			const event: Event = {
+				EventKey: "AddonAPI",
+				EventData: {
+					AddonUUID: AddonUUID,
+					RelativeURL: '/addon-cpi-simcha/subscribe_to_user_events',
+					Method: 'POST',
+					Body: eventData
+				}
+			}
+			const res = await this.postEvent(event);
+			
+			if(!res.Success)
+			{
+				throw new Error(`Failed to register to user events: ${res.ErrorCode}: ${res.ErrorMessage}`);
+			}
+		}
+
+		this.isRegisteredToUserEvents = true;
+	}
 }

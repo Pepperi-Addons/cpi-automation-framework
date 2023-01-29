@@ -1,6 +1,13 @@
 import ClientActionBase from "./clientActions/clientActionsBase";
 
-export type ClientActionBaseReference = Pick<typeof ClientActionBase, keyof typeof ClientActionBase> & (new (data) => ClientActionBase);
+export type ClientActionBaseReference = Pick<typeof ClientActionBase, keyof typeof ClientActionBase> & (new (data, constructorData) => ClientActionBase);
+export type ClientActionAndConstructorData = [clientActionBaseReference: ClientActionBaseReference, constructorData: any];
+
+export interface ClientActionUserEventConstructorData {
+    UserEventName: string, 
+    [key: string]: any 
+}
+
 
 /**
 An interface representing a response from an event.
@@ -120,3 +127,4 @@ export interface ScanBarcodeActionExecutionResult extends Event {
         [key: string]: any
     }
 }
+

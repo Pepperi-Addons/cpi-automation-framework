@@ -2,7 +2,7 @@ import { FilePickerActionExecutionResult  } from "../constants";
 import ClientActionBase from "./clientActionsBase";
 
 
-export default class ClientActionModalTest extends ClientActionBase 
+export default class ClientActionFilePickerTest extends ClientActionBase 
 {
 	executeAction(): Promise<FilePickerActionExecutionResult>
 	{

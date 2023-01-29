@@ -36,6 +36,7 @@
         "@pepperi-addons/debug-server": "*",
         "@pepperi-addons/papi-sdk": "*",
         "lodash.clonedeep": "^4.5.0",
-        "uuid": "^9.0.0"
+        "uuid": "^9.0.0",
+        "shared-cpi-automation": "file:../shared"
     }
 }
