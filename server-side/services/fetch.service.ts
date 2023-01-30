@@ -3,6 +3,14 @@ import { LOGGING_PREFIX } from "shared-cpi-automation";
 
 export default class FetchService
 {
+	/**
+    Makes a POST request to the specified URL with the given body and headers.
+    @param {string} url - The URL to send the POST request to.
+    @param {any} [body] - The request body, in JSON format.
+    @param {{[key: string]: string}} [headers={}] - Additional headers to include in the request.
+    @returns {Promise<any>} A Promise that resolves to the JSON response from the server.
+    @throws {Error} When the response cannot be parsed as JSON or an error occurs while making the request.
+    */
 	async post(url: string, body?: any, headers?:{[key: string]: string}): Promise<any>
 	{
 		const bodyStr = JSON.stringify(body);
