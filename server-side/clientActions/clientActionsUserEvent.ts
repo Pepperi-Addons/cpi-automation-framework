@@ -1,4 +1,4 @@
-import { ADDON_BLOCK_NAME } from "shared-cpi-automation";
+import { ADDON_BLOCK_NAME, LOGGING_PREFIX } from "shared-cpi-automation";
 import { ClientActionUserEventConstructorData, EventResponse, ModalActionExecutionResult } from "../constants";
 import ClientActionModalTest from "./clientActionsModal";
 
@@ -33,21 +33,30 @@ export default class ClientActionUserEvent extends ClientActionModalTest
 
 		if(actualUserEventName !== this.constructorData.UserEventName)
 		{
-			throw new Error(`${this.errorPrefix} Expected userEventName to equal "CpiAutomationFramework", but found "${actualUserEventName}"`);
+			const errorMessage = `${LOGGING_PREFIX} ${this.errorPrefix} Expected userEventName to equal "CpiAutomationFramework", but found "${actualUserEventName}"`;
+			console.error(errorMessage);
+			throw new Error(errorMessage);
 		}
 	}
 
 	protected validateModalActionEmittedByUserEvent(): void
 	{
 		
+		let errorMessage = ''
 		if(this.data.Value.Data?.AddonBlockName !== ADDON_BLOCK_NAME)
 		{
-			throw new Error(`${this.errorPrefix} Expected AddonBlockName to equal "CpiAutomationFramework", but found "${this.data.Value.Data?.AddonBlockName}"`);
+			errorMessage = `${LOGGING_PREFIX} ${this.errorPrefix} Expected AddonBlockName to equal "CpiAutomationFramework", but found "${this.data.Value.Data?.AddonBlockName}"`
 		}
 
-		if(this.data.Value.Data?.Title !== ADDON_BLOCK_NAME)
+		else if(this.data.Value.Data?.Title !== ADDON_BLOCK_NAME)
 		{
-			throw new Error(`${this.errorPrefix} Expected Title to equal "CPI Automation Framework", but found "${this.data.Value.Data?.Title}"`);
+			errorMessage = `${LOGGING_PREFIX} ${this.errorPrefix} Expected Title to equal "CPI Automation Framework", but found "${this.data.Value.Data?.Title}"`;
+		}
+
+		if(errorMessage)
+		{
+			console.error(errorMessage);
+			throw new Error(errorMessage);
 		}
 	}
 }

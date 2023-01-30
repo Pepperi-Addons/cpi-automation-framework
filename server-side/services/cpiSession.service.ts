@@ -2,6 +2,7 @@ import FetchService from "./fetch.service";
 import jwtDecode from "jwt-decode";
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
+import { LOGGING_PREFIX } from "shared-cpi-automation";
 
 export default class CpiSessionService
 {
@@ -21,6 +22,32 @@ export default class CpiSessionService
 			actionUUID: client.ActionUUID,
 			addonSecretKey: client.AddonSecretKey,
 		});
+	}
+
+	public get webApiBaseUrl() 
+	{
+		return (async () => 
+		{
+			if(!this._webApiBaseUrl)
+			{
+				this._webApiBaseUrl = await this.getWebAPIBaseURL();
+			}
+			
+			return this._webApiBaseUrl;
+		})();
+	}
+
+	public get accessToken() 
+	{
+		return (async () => 
+		{
+			if(!this._accessToken)
+			{
+				this._accessToken = await this.getAccessToken(await this.webApiBaseUrl);
+			}
+
+			return this._accessToken;
+		})();
 	}
 
 	protected async getAccessToken(webAPIBaseURL: string): Promise<string> 
@@ -49,7 +76,7 @@ export default class CpiSessionService
 
 		if(!accessToken)
 		{
-			throw new Error(`${maxNumberOfAttempts} tries to create a session failed.`);
+			throw new Error(`${LOGGING_PREFIX} ${maxNumberOfAttempts} tries to create a session failed.`);
 		}
 
 		return accessToken;
@@ -65,31 +92,5 @@ export default class CpiSessionService
 		const baseURL = `https://webapi.${environment}pepperi.com/${webappAddon.Version}/webapi`;
 
 		return baseURL;
-	}
-
-	public get webApiBaseUrl() 
-	{
-		return (async () => 
-		{
-			if(!this._webApiBaseUrl)
-			{
-				this._webApiBaseUrl = await this.getWebAPIBaseURL();
-			}
-			
-			return this._webApiBaseUrl;
-		})();
-	}
-
-	public get accessToken() 
-	{
-		return (async () => 
-		{
-			if(!this._accessToken)
-			{
-				this._accessToken = await this.getAccessToken(await this.webApiBaseUrl);
-			}
-
-			return this._accessToken;
-		})();
 	}
 }

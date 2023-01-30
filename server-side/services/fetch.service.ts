@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { LOGGING_PREFIX } from "shared-cpi-automation";
 
 export default class FetchService
 {
@@ -23,7 +24,7 @@ export default class FetchService
 		}
 		catch (err) 
 		{
-			throw new Error(`Failed to POST: ${err instanceof Error ? err.message : "Unknown error occurred."}`);
+			throw new Error(`${LOGGING_PREFIX} Failed to POST: ${err instanceof Error ? err.message : "Unknown error occurred."}`);
 		}
 	}
 }

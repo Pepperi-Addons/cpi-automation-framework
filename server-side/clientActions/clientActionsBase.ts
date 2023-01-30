@@ -6,8 +6,4 @@ export default abstract class ClientActionBase
 	{}
   
   abstract executeAction(): Promise<Event>;
-  static getUserEventName: () => string = () => 
-  {
-  	return ""
-  };
 }

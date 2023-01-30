@@ -5,6 +5,7 @@ import { Client } from "@pepperi-addons/debug-server/dist";
 import { ClientActionAndConstructorData, Event, EventResponse } from "../constants";
 import CpiSessionService from "./cpiSession.service";
 import deepClone from 'lodash.clonedeep'
+import { LOGGING_PREFIX } from 'shared-cpi-automation';
 
 
 //https://pepperi-addons.github.io/client-actions-docs/
@@ -31,7 +32,7 @@ export class EventsService
 		await this.registerToUserEventsIfNecessary();
 
 		const eventResponse = await this.postEvent(eventBody);
-		console.log(eventResponse);
+		console.log(LOGGING_PREFIX, eventResponse);
 
 		const clientActionRequest = eventResponse.Value;
 
@@ -64,7 +65,9 @@ export class EventsService
 		if(this.clientActionClasses?.length > 0)
 		{
 			const numberOfActionsLeft = this.clientActionClasses.length;
-			throw new Error(`ClientActionFactory.clientActionClasses is not empty (${numberOfActionsLeft} action(s) left in the queue) even though there are no further actions.`);
+			const errorMessage = `${LOGGING_PREFIX} ClientActionFactory.clientActionClasses is not empty (${numberOfActionsLeft} action(s) left in the queue) even though there are no further actions.`;
+			console.error(errorMessage);
+			throw new Error(errorMessage);
 		}
 	}
 
@@ -111,7 +114,7 @@ export class EventsService
  
 		 if(errorMessage)
 		 {
-			 throw new Error(`${errorMessage}\nGot the following client action request: ${JSON.stringify(data)}`);
+			 throw new Error(`${LOGGING_PREFIX} ${errorMessage}\nGot the following client action request: ${JSON.stringify(data)}`);
 		 }
 		 
 		 // Pop the first client action class
@@ -120,7 +123,13 @@ export class EventsService
  
 		 return clientActionInstance;
 	 }
-
+	
+	/**
+    Registers to the user events, if necessary.
+    This method will check if the user events are already registered. If not, it will emit an AddonAPI event to an endpoint that subscribes to the user events.
+    The user events names are taken from the constructor data that has the UserEventName property.
+    @throws {Error} if the registration to user events fails. The error message includes error message returned from the AddonAPI event.
+    */
 	protected async registerToUserEventsIfNecessary() 
 	{
 		if(!this.isRegisteredToUserEvents)
@@ -143,7 +152,7 @@ export class EventsService
 			
 			if(!res.Success)
 			{
-				throw new Error(`Failed to register to user events: ${res.ErrorCode}: ${res.ErrorMessage}`);
+				throw new Error(`${LOGGING_PREFIX} Failed to register to user events: ${res.ErrorCode}: ${res.ErrorMessage}`);
 			}
 		}
 

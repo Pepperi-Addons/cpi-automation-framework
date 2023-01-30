@@ -2,20 +2,38 @@ import '@pepperi-addons/cpi-node'
 import { ModalOptions } from '@pepperi-addons/cpi-node/build/cpi-side/app/components';
 import { AddonsDataSearchParams } from '@pepperi-addons/cpi-node/build/cpi-side/client-api';
 import { AddonUUID } from '../addon.config.json'
-import { SCHEMA_NAME, ADDON_BLOCK_NAME } from "shared-cpi-automation"
+import { SCHEMA_NAME, ADDON_BLOCK_NAME, LOGGING_PREFIX } from "shared-cpi-automation"
 
+
+/*
+	Since currently no way to get the full list of user events, we have to rely on the test passing the list of
+	user events it expects, and to subscribe to them.
+	Since a Sync or a Resync could be initiated by an addon's logic mid-test, resulting in a CPI-Node reload and a loss
+	of the subscriptions, we have to somehow save the list of user events.
+
+	The solution we came up with is to save the user events in an ADAL table.
+	The table's contents is read on load, and we subscribe to these events.
+
+	A test still passes a list of its expected user events (this is how new events are added to the table, as we add new tests).
+	We we check to see if we already subscribed to the passed events. If we have, nothing's left to do.
+	Otherwise, we add the new event to the table, and then subscribe to it.
+
+	To improve performance and avoid multiple readings from the table, on load we read the table's contents into a global Set.
+	Now all validations (whether we already subscribed to a user event, or whether it is saved to the table) is done
+	By querying this Set.
+*/
 declare global {
     var userEventsSet: Set<string>;
 }
 
 export async function load(configuration: any) 
 {
-	console.log('CPI Automation framework - get list of user events');
+	console.log(`${LOGGING_PREFIX} get list of user events`);
 	const userEvents: Array<string> = await getUserEventsFromSchema();
 
 	global.userEventsSet = new Set<string>();
 
-	console.log('CPI Automation framework - Subscribe to user events listed in schema');
+	console.log(`${LOGGING_PREFIX} Subscribe to user events listed in schema`);
 	await subscribeToUserEvents(userEvents);
 }
 
@@ -57,7 +75,7 @@ async function getUserEventsFromSchema(): Promise<Array<string>>
 	}
 	catch(error)
 	{
-		const errorMessage = `Failed to get user events from "${SCHEMA_NAME}" table. Error: ${error instanceof Error ? error.message : "Unknown error occurred."}`;
+		const errorMessage = `${LOGGING_PREFIX} Failed to get user events from "${SCHEMA_NAME}" table. Error: ${error instanceof Error ? error.message : "Unknown error occurred."}`;
 		console.error(errorMessage);
 	}
 
@@ -74,14 +92,14 @@ async function subscribeToUserEvents(userEvents: Array<string>): Promise<void>
 	
 	await addUserEventsToSchema(userEventsNotYetSubscribed);
 
-	console.log(`CPI Automation framework - Adding interceptors for the following User Events: ${JSON.stringify(userEventsNotYetSubscribed)}`);
+	console.log(`${LOGGING_PREFIX} Adding interceptors for the following User Events: ${JSON.stringify(userEventsNotYetSubscribed)}`);
 	for (const userEventName of userEvents) 
 	{
 		global.userEventsSet.add(userEventName);
 
 		pepperi.events.intercept(userEventName as any, {}, async (data, next, main): Promise<any> => 
 		{
-			console.log(`CPI Automation framework - Intercepted User Event "${userEventName}".`);
+			console.log(`${LOGGING_PREFIX} Intercepted User Event "${userEventName}".`);
 
 			const { client, clientLoop, timers, clientFactory, ...userEventData } = data;
 			const eventData = {
@@ -99,14 +117,14 @@ async function subscribeToUserEvents(userEvents: Array<string>): Promise<void>
 				}
 			}
 
-			console.log(`CPI Automation framework - modal body: ${JSON.stringify(modalOptions)}`);
+			console.log(`${LOGGING_PREFIX} modal body: ${JSON.stringify(modalOptions)}`);
 
 			// Emit CPI test client action
-			console.log(`CPI Automation framework - Emitting modal client action.`);
+			console.log(`${LOGGING_PREFIX} Emitting modal client action.`);
 
 			await data.client?.showModal(modalOptions);
 
-			console.log(`CPI Automation framework - Got back from modal client action.`);
+			console.log(`${LOGGING_PREFIX} Got back from modal client action.`);
 
 			await next(main);
 		});
@@ -129,7 +147,7 @@ async function addUserEventsToSchema(userEvents: Array<string>): Promise<void>
 		}
 		catch(error)
 		{
-			const errorMessage = `Failed to save user event "${userEvent}" to "${SCHEMA_NAME}" table. Error: ${error instanceof Error ? error.message : "Unknown error occurred."}`;
+			const errorMessage = `${LOGGING_PREFIX} Failed to save user event "${userEvent}" to "${SCHEMA_NAME}" table. Error: ${error instanceof Error ? error.message : "Unknown error occurred."}`;
 			console.error(errorMessage);
 		}
 	}
