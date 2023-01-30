@@ -142,8 +142,7 @@ async function addUserEventsToSchema(userEvents: Array<string>): Promise<void>
 	{
 		try
 		{
-			//TODO uncomment this before handover. It is commented just so I won't screw up the distributor I'm working on.
-			// await pepperi.addons.data.uuid(AddonUUID).table(schema_name).upsert({Key: userEvent});
+			await pepperi.addons.data.uuid(AddonUUID).table(SCHEMA_NAME).upsert({Key: userEvent});
 		}
 		catch(error)
 		{
