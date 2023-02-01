@@ -1,14 +1,3 @@
-import ClientActionBase from "./clientActions/clientActionsBase";
-
-export type ClientActionBaseReference = Pick<typeof ClientActionBase, keyof typeof ClientActionBase> & (new (data, constructorData) => ClientActionBase);
-export type ClientActionAndConstructorData = [clientActionBaseReference: ClientActionBaseReference, constructorData: any];
-
-export interface ClientActionUserEventConstructorData {
-    UserEventName: string, 
-    [key: string]: any 
-}
-
-
 /**
 An interface representing a response from an event.
 @property {string} ErrorCode - The error code of the event, if any.
@@ -23,6 +12,31 @@ export interface EventResponse {
     Value: ClientAction
 }
 
+
+export interface EventResponseDialog extends EventResponse 
+{
+    Value: DialogClientAction
+}
+
+export interface EventResponseGeoLocation extends EventResponse 
+{
+    Value: GeoLocationClientAction
+}
+export interface EventResponseHud extends EventResponse 
+{
+    Value: HudClientAction
+}
+export interface EventResponseModal extends EventResponse 
+{
+    Value: ModalClientAction
+}
+
+export interface EventResponseNavigation extends EventResponse 
+{
+    Value: NavigationClientAction
+}
+
+
 /**
 An interface representing an event callback.
 @property {string} Callback - The callback UUID.
@@ -35,6 +49,53 @@ export interface ClientAction
   Type: string;
   Data?: { [key: string]: any };
 }
+
+export interface DialogClientAction extends ClientAction {
+    Data: {
+        Title: string;
+        Content: string;
+        IsHtml: boolean;
+        Actions: {
+            Title: string;
+            Key?: string;
+        }[];
+    }
+}
+
+export interface GeoLocationClientAction extends ClientAction {
+    Data: {
+        Accuracy: string;
+        MaxWaitTime: number;
+    }
+}
+
+export interface HudClientAction extends ClientAction {
+    Data: {
+        HUDKey?: string;
+        State: string;
+        Message?: string;
+        CloseMessage?: string;
+        CancelEventKey?: string;
+        Interval?: number;
+    }
+}
+
+export interface ModalClientAction extends ClientAction {
+    Data: {
+        AddonBlockName: string;
+        HostObject: any;
+        Title: string;
+        AllowCancel: boolean;
+    }
+}
+
+export interface NavigationClientAction extends ClientAction {
+    Data: {
+        URL: string;
+        History: string;
+    }
+}
+
 
 export interface Event {
     EventKey: string;

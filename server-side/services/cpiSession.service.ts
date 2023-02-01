@@ -8,8 +8,8 @@ export default class CpiSessionService
 {
 	private  papiClient: PapiClient;
 
-	private _accessToken = '';
-	private _webApiBaseUrl = '';
+	private static _accessToken = '';
+	private static _webApiBaseUrl = '';
 
 	private readonly WEB_API_ADDON_UUID = "00000000-0000-0000-0000-0000003eba91";
 
@@ -28,12 +28,12 @@ export default class CpiSessionService
 	{
 		return (async () => 
 		{
-			if(!this._webApiBaseUrl)
+			if(!CpiSessionService._webApiBaseUrl)
 			{
-				this._webApiBaseUrl = await this.getWebAPIBaseURL();
+				CpiSessionService._webApiBaseUrl = await this.getWebAPIBaseURL();
 			}
 			
-			return this._webApiBaseUrl;
+			return CpiSessionService._webApiBaseUrl;
 		})();
 	}
 
@@ -41,12 +41,12 @@ export default class CpiSessionService
 	{
 		return (async () => 
 		{
-			if(!this._accessToken)
+			if(!CpiSessionService._accessToken)
 			{
-				this._accessToken = await this.getAccessToken(await this.webApiBaseUrl);
+				CpiSessionService._accessToken = await this.getAccessToken(await this.webApiBaseUrl);
 			}
 
-			return this._accessToken;
+			return CpiSessionService._accessToken;
 		})();
 	}
 
