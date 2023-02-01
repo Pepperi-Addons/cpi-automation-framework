@@ -9,7 +9,7 @@ export class EventsService<T extends Event>
 	constructor(protected client: Client)
 	{}
 
-	public postEvent(eventBody: T) 
+	public emitEvent(eventBody: T) 
 	{
 		return new ClientActionExpecter<T>(this.client, eventBody);
 	}
