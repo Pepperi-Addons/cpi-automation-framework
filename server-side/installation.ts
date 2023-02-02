@@ -16,25 +16,25 @@ import { AddonUUID } from '../addon.config.json'
 export async function install(client: Client, request: Request): Promise<any> 
 {
 	const resultObject = {success: true, resultObject: {}};
-	let schema: AddonDataScheme | undefined = undefined;
+	// let schema: AddonDataScheme | undefined = undefined;
 
-	const papiClient: PapiClient = createPapiClient(client);
+	// const papiClient: PapiClient = createPapiClient(client);
 
-	try
-	{
-		schema = await createUserEventsSchema(papiClient);
-	}
-	catch(error)
-	{
-		const errorMessage = error instanceof Error ? error.message : `An unknown error occurred trying to upsert a schema.`;
-		console.error(errorMessage);
-		resultObject.success = false;
-	}
+	// try
+	// {
+	// 	schema = await createUserEventsSchema(papiClient);
+	// }
+	// catch(error)
+	// {
+	// 	const errorMessage = error instanceof Error ? error.message : `An unknown error occurred trying to upsert a schema.`;
+	// 	console.error(errorMessage);
+	// 	resultObject.success = false;
+	// }
 	
-	if(resultObject.success)
-	{
-		resultObject.resultObject = { CreatedSchema: schema};
-	}
+	// if(resultObject.success)
+	// {
+	// 	resultObject.resultObject = { CreatedSchema: schema};
+	// }
 
 	return resultObject;
 }

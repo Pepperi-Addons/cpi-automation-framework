@@ -22,19 +22,19 @@ import { SCHEMA_NAME, ADDON_BLOCK_NAME, LOGGING_PREFIX } from "shared-cpi-automa
 	Now all validations (whether we already subscribed to a user event, or whether it is saved to the table) is done
 	By querying this Set.
 */
-declare global {
-    var userEventsSet: Set<string>;
-}
+// declare global {
+//     var userEventsSet: Set<string>;
+// }
 
 export async function load(configuration: any) 
 {
-	console.log(`${LOGGING_PREFIX} get list of user events`);
-	const userEvents: Array<string> = await getUserEventsFromSchema();
+	// console.log(`${LOGGING_PREFIX} get list of user events`);
+	// const userEvents: Array<string> = await getUserEventsFromSchema();
 
-	global.userEventsSet = new Set<string>();
+	// global.userEventsSet = new Set<string>();
 
-	console.log(`${LOGGING_PREFIX} Subscribe to user events listed in schema`);
-	await subscribeToUserEvents(userEvents);
+	// console.log(`${LOGGING_PREFIX} Subscribe to user events listed in schema`);
+	// await subscribeToUserEvents(userEvents);
 }
 
 export const router = Router();
@@ -56,31 +56,31 @@ router.post('/subscribe_to_user_events', async (req, res, next) =>
 	}
 });
 
-/** 
-	Asynchronously gets all the user events from a schema.
-    @return {Promise<Array<string>>} A promise that resolves to an array of strings representing the user events.
-*/
-async function getUserEventsFromSchema(): Promise<Array<string>> 
-{
-	let userEvents: Array<string> = [];
+// /** 
+// 	Asynchronously gets all the user events from a schema.
+//     @return {Promise<Array<string>>} A promise that resolves to an array of strings representing the user events.
+// */
+// async function getUserEventsFromSchema(): Promise<Array<string>> 
+// {
+// 	let userEvents: Array<string> = [];
 
-	const addonsDataSearchParams: AddonsDataSearchParams = {
-		Fields: ["Key"],
-		PageSize: -1,
-	};
+// 	const addonsDataSearchParams: AddonsDataSearchParams = {
+// 		Fields: ["Key"],
+// 		PageSize: -1,
+// 	};
 
-	try
-	{
-		userEvents = (await pepperi.addons.data.uuid(AddonUUID).table(SCHEMA_NAME).search(addonsDataSearchParams)).Objects.map(userEvent => userEvent.Key!);
-	}
-	catch(error)
-	{
-		const errorMessage = `${LOGGING_PREFIX} Failed to get user events from "${SCHEMA_NAME}" table. Error: ${error instanceof Error ? error.message : "Unknown error occurred."}`;
-		console.error(errorMessage);
-	}
+// 	try
+// 	{
+// 		userEvents = (await pepperi.addons.data.uuid(AddonUUID).table(SCHEMA_NAME).search(addonsDataSearchParams)).Objects.map(userEvent => userEvent.Key!);
+// 	}
+// 	catch(error)
+// 	{
+// 		const errorMessage = `${LOGGING_PREFIX} Failed to get user events from "${SCHEMA_NAME}" table. Error: ${error instanceof Error ? error.message : "Unknown error occurred."}`;
+// 		console.error(errorMessage);
+// 	}
 
-	return userEvents;
-}
+// 	return userEvents;
+// }
 
 /**
 Subscribes to user events and intercepts them for further processing.
@@ -88,14 +88,14 @@ Subscribes to user events and intercepts them for further processing.
 */
 async function subscribeToUserEvents(userEvents: Array<string>): Promise<void>
 {
-	const userEventsNotYetSubscribed = userEvents.filter(userEvent => !global.userEventsSet.has(userEvent));
+	// const userEventsNotYetSubscribed = userEvents.filter(userEvent => !global.userEventsSet.has(userEvent));
 	
-	await addUserEventsToSchema(userEventsNotYetSubscribed);
+	// await addUserEventsToSchema(userEventsNotYetSubscribed);
 
-	console.log(`${LOGGING_PREFIX} Adding interceptors for the following User Events: ${JSON.stringify(userEventsNotYetSubscribed)}`);
+	console.log(`${LOGGING_PREFIX} Adding interceptors for the following User Events: ${JSON.stringify(userEvents)}`);
 	for (const userEventName of userEvents) 
 	{
-		global.userEventsSet.add(userEventName);
+		// global.userEventsSet.add(userEventName);
 
 		pepperi.events.intercept(userEventName as any, {}, async (data, next, main): Promise<any> => 
 		{
@@ -131,23 +131,23 @@ async function subscribeToUserEvents(userEvents: Array<string>): Promise<void>
 	}
 }
 
-/**
-    Asynchronously add the user events to the addon's user_events.
-    @param {Array<string>} userEvents - An array of user events to be added.
-    @return {Promise<void>} A promise that resolves when the user events have been added to the schema.
-*/
-async function addUserEventsToSchema(userEvents: Array<string>): Promise<void>
-{
-	for (const userEvent of userEvents)
-	{
-		try
-		{
-			await pepperi.addons.data.uuid(AddonUUID).table(SCHEMA_NAME).upsert({Key: userEvent});
-		}
-		catch(error)
-		{
-			const errorMessage = `${LOGGING_PREFIX} Failed to save user event "${userEvent}" to "${SCHEMA_NAME}" table. Error: ${error instanceof Error ? error.message : "Unknown error occurred."}`;
-			console.error(errorMessage);
-		}
-	}
-}
+// /**
+//     Asynchronously add the user events to the addon's user_events.
+//     @param {Array<string>} userEvents - An array of user events to be added.
+//     @return {Promise<void>} A promise that resolves when the user events have been added to the schema.
+// */
+// async function addUserEventsToSchema(userEvents: Array<string>): Promise<void>
+// {
+// 	for (const userEvent of userEvents)
+// 	{
+// 		try
+// 		{
+// 			await pepperi.addons.data.uuid(AddonUUID).table(SCHEMA_NAME).upsert({Key: userEvent});
+// 		}
+// 		catch(error)
+// 		{
+// 			const errorMessage = `${LOGGING_PREFIX} Failed to save user event "${userEvent}" to "${SCHEMA_NAME}" table. Error: ${error instanceof Error ? error.message : "Unknown error occurred."}`;
+// 			console.error(errorMessage);
+// 		}
+// 	}
+// }
