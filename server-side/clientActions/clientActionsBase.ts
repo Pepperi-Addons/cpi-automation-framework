@@ -1,9 +1,7 @@
-import { Event, EventResponse } from "../constants";
+import { EventResponse } from "../constants";
 
 export default abstract class ClientActionBase
 {
-	constructor(protected data: EventResponse, protected constructorData: any)
+	constructor(protected data: EventResponse)
 	{}
-  
-  abstract executeAction(): Promise<Event>;
 }

@@ -4,15 +4,15 @@ import ClientActionBase from "./clientActionsBase";
 
 export default class ClientActionDialogTest extends ClientActionBase 
 {
-	executeAction(): Promise<DialogActionExecutionResult>
+	selectActionK(k: number): DialogActionExecutionResult
 	{
 		const result: DialogActionExecutionResult = {
 			EventKey: this.data.Value.Callback,
 			EventData: {
-				SelectedAction: this.data.Value.Data?.Actions[0].Key
+				SelectedAction: this.data.Value.Data?.Actions[k].Key
 			}
 		};
 
-		return Promise.resolve(result);
+		return result;
 	}
 }

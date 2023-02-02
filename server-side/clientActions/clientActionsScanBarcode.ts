@@ -4,17 +4,17 @@ import ClientActionBase from "./clientActionsBase";
 
 export default class ClientActionBarcodeScanTest extends ClientActionBase 
 {
-	executeAction(): Promise<ScanBarcodeActionExecutionResult> 
+	getBarcode(barcode: number, success = true, errorMessage: "" | "UserCanceled" | "AccessDenied" = ""): ScanBarcodeActionExecutionResult
 	{
 		const result: ScanBarcodeActionExecutionResult = {
 			EventKey: this.data.Value.Callback,
 			EventData: {
-				Success: this.data.Success,
-				Barcode: 12345678,
-				ErrorMessage: ""
+				Success: success,
+				Barcode: barcode,
+				ErrorMessage: errorMessage
 			}
 		};
 
-		return Promise.resolve(result);
+		return result;
 	}
 }

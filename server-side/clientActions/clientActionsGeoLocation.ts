@@ -50,7 +50,7 @@ const accountDataArr: accountGeoData[] = [
 
 export default class ClientActionGeoLocationTest extends ClientActionBase 
 {
-	executeAction(): Promise<GeoLocationActionExecutionResult> 
+	returnRandomLocation(): GeoLocationActionExecutionResult 
 	{
 		const randIndex = Math.floor(Math.random() * 3) + 1;
 		const randAccuracy = Math.floor(Math.random() * 100) + 1;
@@ -65,6 +65,6 @@ export default class ClientActionGeoLocationTest extends ClientActionBase
 			}
 		};
 
-		return Promise.resolve(result);
+		return result;
 	}
 }

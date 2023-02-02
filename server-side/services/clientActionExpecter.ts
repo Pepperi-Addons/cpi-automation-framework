@@ -3,11 +3,11 @@ import CpiSessionService from "./cpiSession.service";
 import FetchService from "./fetch.service";
 import deepClone from 'lodash.clonedeep'
 import { DialogActionExecutionResult, EventResponse,
-        EventResponseDialog, Event, EventResponseModal,
-        GeoLocationActionExecutionResult, EventResponseGeoLocation,
-        HUDActionExecutionResult, EventResponseHud,
-        ModalActionExecutionResult, EventResponseNavigation,
-        ScanBarcodeActionExecutionResult } from "../constants";
+	EventResponseDialog, Event, EventResponseModal,
+	GeoLocationActionExecutionResult, EventResponseGeoLocation,
+	HUDActionExecutionResult, EventResponseHud,
+	ModalActionExecutionResult, EventResponseNavigation,
+	ScanBarcodeActionExecutionResult } from "../constants";
 import { EventsService } from "./events.service";
 import { AddonUUID } from "../../addon.config.json"
 import { ADDON_BLOCK_NAME, LOGGING_PREFIX } from "shared-cpi-automation";
@@ -151,7 +151,7 @@ export default class ClientActionExpecter<T extends Event>
 	protected async getExpectedEventResponse<U extends EventResponse> (expectedClientActinType: string): Promise<U>
 	{
 		const eventResponse = await this.postEvent(this.eventBody) as U;
-        if(!eventResponse.Success)
+		if(!eventResponse.Success)
 		{
 			throw new Error(`${LOGGING_PREFIX} Failed getting the expected client action: ${eventResponse.ErrorCode}: ${eventResponse.ErrorMessage}`);
 		}
@@ -188,7 +188,6 @@ export default class ClientActionExpecter<T extends Event>
 		else if (eventResponse.Value.Data?.HostObject?.pageParams?.userEventName !== userEventName) 
 		{
 			errorMessage = `${LOGGING_PREFIX} Expected userEventName to equal "${userEventName}", but found "${eventResponse.Value.Data?.HostObject?.pageParams?.userEventName}"`;
-			console.error(errorMessage);
 		}
 
 		if (errorMessage) 

@@ -6,7 +6,7 @@ export default class ClientActionHUDTest extends ClientActionBase
 {	
 	private static hudUuid = uuidCreator();
 	
-	async executeAction(): Promise<HUDActionExecutionResult> 
+	executeAction(): HUDActionExecutionResult 
 	{
 		const resObject: HUDActionExecutionResult = {
 			EventKey: this.data.Value.Callback,
@@ -20,6 +20,6 @@ export default class ClientActionHUDTest extends ClientActionBase
 			resObject.EventData.HUDKey = ClientActionHUDTest.hudUuid;
 		}
 
-		return Promise.resolve(resObject);
+		return resObject;
 	}
 }
