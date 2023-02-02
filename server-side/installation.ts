@@ -39,15 +39,15 @@ export async function install(client: Client, request: Request): Promise<any>
 	return resultObject;
 }
 
-function createPapiClient(client: Client): PapiClient {
-	return new PapiClient({
-		baseURL: client.BaseURL,
-		token: client.OAuthAccessToken,
-		actionUUID: client.ActionUUID,
-		addonSecretKey: client.AddonSecretKey,
-		addonUUID: client.AddonUUID,
-	})
-}
+// function createPapiClient(client: Client): PapiClient {
+// 	return new PapiClient({
+// 		baseURL: client.BaseURL,
+// 		token: client.OAuthAccessToken,
+// 		actionUUID: client.ActionUUID,
+// 		addonSecretKey: client.AddonSecretKey,
+// 		addonUUID: client.AddonUUID,
+// 	})
+// }
 
 export async function uninstall(client: Client, request: Request): Promise<any> 
 {
@@ -64,22 +64,22 @@ export async function downgrade(client: Client, request: Request): Promise<any>
 	return {success:true,resultObject:{}}
 }
 
-async function createUserEventsSchema(papiClient: PapiClient): Promise <AddonDataScheme>
-{
-	const schema: AddonDataScheme = {
-		Name: SCHEMA_NAME,
-		AddonUUID: AddonUUID,
-		Type: 'data',
-		SyncData: {
-			Sync: true
-		},
-		Fields:
-		{
-			Key:{
-				Type: "String"
-			}
-		}
-	}
+// async function createUserEventsSchema(papiClient: PapiClient): Promise <AddonDataScheme>
+// {
+// 	const schema: AddonDataScheme = {
+// 		Name: SCHEMA_NAME,
+// 		AddonUUID: AddonUUID,
+// 		Type: 'data',
+// 		SyncData: {
+// 			Sync: true
+// 		},
+// 		Fields:
+// 		{
+// 			Key:{
+// 				Type: "String"
+// 			}
+// 		}
+// 	}
 
-	return await papiClient.addons.data.schemes.post(schema);
-}
+// 	return await papiClient.addons.data.schemes.post(schema);
+// }
