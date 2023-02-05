@@ -22,16 +22,16 @@ import { SCHEMA_NAME, ADDON_BLOCK_NAME, LOGGING_PREFIX } from "shared-cpi-automa
 	Now all validations (whether we already subscribed to a user event, or whether it is saved to the table) is done
 	By querying this Set.
 */
-// declare global {
-//     var userEventsSet: Set<string>;
-// }
+declare global {
+    var userEventsSet: Set<string>;
+}
 
 export async function load(configuration: any) 
 {
 	// console.log(`${LOGGING_PREFIX} get list of user events`);
 	// const userEvents: Array<string> = await getUserEventsFromSchema();
 
-	// global.userEventsSet = new Set<string>();
+	global.userEventsSet = new Set<string>();
 
 	// console.log(`${LOGGING_PREFIX} Subscribe to user events listed in schema`);
 	// await subscribeToUserEvents(userEvents);
@@ -88,14 +88,14 @@ Subscribes to user events and intercepts them for further processing.
 */
 async function subscribeToUserEvents(userEvents: Array<string>): Promise<void>
 {
-	// const userEventsNotYetSubscribed = userEvents.filter(userEvent => !global.userEventsSet.has(userEvent));
+	const userEventsNotYetSubscribed = userEvents.filter(userEvent => !global.userEventsSet.has(userEvent));
 	
 	// await addUserEventsToSchema(userEventsNotYetSubscribed);
 
-	console.log(`${LOGGING_PREFIX} Adding interceptors for the following User Events: ${JSON.stringify(userEvents)}`);
-	for (const userEventName of userEvents) 
+	console.log(`${LOGGING_PREFIX} Adding interceptors for the following User Events: ${JSON.stringify(userEventsNotYetSubscribed)}`);
+	for (const userEventName of userEventsNotYetSubscribed) 
 	{
-		// global.userEventsSet.add(userEventName);
+		global.userEventsSet.add(userEventName);
 
 		pepperi.events.intercept(userEventName as any, {}, async (data, next, main): Promise<any> => 
 		{
