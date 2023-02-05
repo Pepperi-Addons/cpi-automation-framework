@@ -1,3 +1,5 @@
+export type ClientActionType = 'Dialog' | 'GeoLocation' | 'HUD' | 'Modal' | 'Navigation' | 'Barcode' | "UserEvent" | "Finish"
+
 /**
 An interface representing a response from an event.
 @property {string} ErrorCode - The error code of the event, if any.

@@ -1,8 +1,6 @@
-import { Event, EventResponse } from "../constants";
+import { ClientActionType, Event, EventResponse } from "../constants";
 import { EventsService } from "../services/events.service";
 import {ClientActionDialog, ClientActionGeoLocation, ClientActionHUD, ClientActionModal, ClientActionNavigation, ClientActionBarcodeScan, FinishEvent, UserEvent} from "./index";
-
-export type ClientActionType = 'Dialog' | 'GeoLocation' | 'HUD' | 'Modal' | 'Navigation' | 'Barcode' | "UserEvent" | "Finish"
 
 export class EventResult
 {
