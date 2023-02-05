@@ -1,5 +1,7 @@
-import { GeoLocationActionExecutionResult } from "../constants";
-import ClientActionBase from "./clientActionsBase";
+import { EventResponseGeoLocation, GeoLocationActionExecutionResult } from "../constants";
+import { EventsService } from "../services/events.service";
+import {EventResult}  from "./index";
+
 
 interface accountGeoData {
   City: string;
@@ -48,9 +50,23 @@ const accountDataArr: accountGeoData[] = [
 	accountData4,
 ];
 
-export default class ClientActionGeoLocationTest extends ClientActionBase 
+export class ClientActionGeoLocation extends EventResult 
 {
-	returnRandomLocation(): GeoLocationActionExecutionResult 
+	constructor(protected eventsService: EventsService, protected data: EventResponseGeoLocation)
+	{
+		super(eventsService, data);
+	}
+	
+	get eventData() 
+	{
+		return this.data.Value.Data
+	}
+
+	/**
+    This method sets a random location in response to a geo location request.
+    @return {@link Promise} of {@link EventResult} containing the random location information
+    */
+	async setRandomLocation(): Promise<EventResult> 
 	{
 		const randIndex = Math.floor(Math.random() * 3) + 1;
 		const randAccuracy = Math.floor(Math.random() * 100) + 1;
@@ -65,6 +81,14 @@ export default class ClientActionGeoLocationTest extends ClientActionBase
 			}
 		};
 
-		return result;
+		return await this.setResult(result);
+	}
+
+	public async setResult(resultToSet: GeoLocationActionExecutionResult): Promise<EventResult>;
+	public async setResult(resultToSet: any): Promise<EventResult>;
+	
+	public async setResult(resultToSet: any): Promise<EventResult> 
+	{
+		return await super.setResult(resultToSet);
 	}
 }

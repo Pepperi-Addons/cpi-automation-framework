@@ -31,6 +31,11 @@ export interface EventResponseModal extends EventResponse
     Value: ModalClientAction
 }
 
+export interface EventResponseUserEvent extends EventResponse 
+{
+    Value: UserActionData
+}
+
 export interface EventResponseNavigation extends EventResponse 
 {
     Value: NavigationClientAction
@@ -81,6 +86,15 @@ export interface HudClientAction extends ClientAction {
 }
 
 export interface ModalClientAction extends ClientAction {
+    Data: {
+        AddonBlockName: string;
+        HostObject: any;
+        Title: string;
+        AllowCancel: boolean;
+    }
+}
+
+export interface UserActionData extends ClientAction {
     Data: {
         AddonBlockName: string;
         HostObject: any;
@@ -172,6 +186,8 @@ export interface ScanBarcodeActionExecutionResult extends Event {
         [key: string]: any
     }
 }
+
+ export interface UserEventExecutionResult extends ModalActionExecutionResult {}
 
 /**
  * File Picker action execution result is defined here:

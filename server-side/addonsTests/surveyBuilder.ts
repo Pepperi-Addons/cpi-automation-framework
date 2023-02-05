@@ -1,7 +1,5 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
-import ClientActionDialogTest from "../clientActions/clientActionsDialog";
-import ClientActionUserEvent from "../clientActions/clientActionsUserEvent";
-import { DialogActionExecutionResult, Event, ModalActionExecutionResult } from "../constants";
+import { Event } from "../constants";
 import { EventsService } from "../services/events.service";
 
 
@@ -9,32 +7,39 @@ export default class SurveyBuilderTest
 {
 	constructor(protected client: Client)
 	{}
+
 	public async test()
 	{
+        // Register to user events.
+		const initialEventsService = new EventsService(this.client);
+		const userEvents = ["OnSurveyDataLoad", "OnSurveyViewLoad"];
 
-		const initialEventBody: Event = {
+		await initialEventsService.registerToUserEvents(userEvents);
+
+        const initialEventBody: Event = {
 			EventKey: "OnClientSurveyLoad",
 			EventData: {
 				"SurveyKey": "05456092-08e4-40fd-8584-f6eb0c365e28"
 			}
 		}
-		const initialEventsService = new EventsService(this.client);
 
 		// Emit "OnClientSurveyLoad" event, expecting "OnSurveyDataLoad" user event
-		const {eventService, eventResult} = await initialEventsService.emitEvent(initialEventBody).expectingUserEvent("OnSurveyDataLoad");
-		const firstUserActionResponse: ModalActionExecutionResult = new ClientActionUserEvent(eventResult).executeAction();
-    
-		// Emit a response for the "OnSurveyDataLoad" user event, expecting dialog client action
-		const {eventService: eventService2, eventResult: eventResult2} = await eventService.emitEvent(firstUserActionResponse).expectingDialogClientAction();
-		const result: DialogActionExecutionResult = new ClientActionDialogTest(eventResult2).selectActionK(0);
-    
-		// Emit a response for the dialog client action, expecting "OnSurveyViewLoad" user event
-		const {eventService: eventService3, eventResult: eventResult3} = await eventService2.emitEvent(result).expectingUserEvent("OnSurveyViewLoad");
-		const secondUserActionResponse: ModalActionExecutionResult = new ClientActionUserEvent(eventResult3).executeAction();
-        
-		// Emit a response for the "OnSurveyViewLoad" user event, expecting finish event
-		const finishEvent = eventService3.emitEvent(secondUserActionResponse).expectingFinish();
-		console.log(JSON.stringify(finishEvent));
+		const clientAction = await initialEventsService.emitEvent(initialEventBody);
 
+		const firstUserEvent = clientAction.as("UserEvent");
+		console.log(firstUserEvent.eventType);
+		console.log(JSON.stringify(firstUserEvent.eventData));
+
+		const secondDialog = (await firstUserEvent.setEmptyResult()).as("Dialog");
+		console.log(secondDialog.eventType);
+		console.log(JSON.stringify(secondDialog.eventData));
+
+		const thirdUserEvent = (await secondDialog.selectActionK(0)).as("UserEvent");
+		console.log(thirdUserEvent.eventType);
+        console.log(JSON.stringify(thirdUserEvent.eventData));
+
+		const finish = await (await thirdUserEvent.setEmptyResult()).as("Finish");
+		console.log(finish.eventType);
+		console.log(JSON.stringify(finish.eventData));
 	}
 }
