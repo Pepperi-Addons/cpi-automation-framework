@@ -1,8 +1,8 @@
-import '@pepperi-addons/cpi-node'
+import '@pepperi-addons/cpi-node';
 import { ModalOptions } from '@pepperi-addons/cpi-node/build/cpi-side/app/components';
 import { AddonsDataSearchParams } from '@pepperi-addons/cpi-node/build/cpi-side/client-api';
-import { AddonUUID } from '../addon.config.json'
-import { SCHEMA_NAME, ADDON_BLOCK_NAME, LOGGING_PREFIX } from "shared-cpi-automation"
+import { AddonUUID } from '../addon.config.json';
+import { SCHEMA_NAME, ADDON_BLOCK_NAME, LOGGING_PREFIX } from "shared-cpi-automation";
 
 
 /*
@@ -115,7 +115,7 @@ async function subscribeToUserEvents(userEvents: Array<string>): Promise<void>
 					pageKey: "",
 					pageParams: eventData
 				}
-			}
+			};
 
 			console.log(`${LOGGING_PREFIX} modal body: ${JSON.stringify(modalOptions)}`);
 

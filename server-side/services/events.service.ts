@@ -2,9 +2,9 @@ import { Client } from "@pepperi-addons/debug-server/dist";
 import { Event, EventResponse } from "../constants";
 import CpiSessionService from "./cpiSession.service";
 import FetchService from "./fetch.service";
-import deepClone from 'lodash.clonedeep'
+import deepClone from 'lodash.clonedeep';
 import {EventResult} from "../eventEntities/index";
-import { AddonUUID } from '../../addon.config.json'
+import { AddonUUID } from '../../addon.config.json';
 import { LOGGING_PREFIX } from "shared-cpi-automation";
 
 export class EventsService
@@ -46,7 +46,7 @@ export class EventsService
 				Method: 'POST',
 				Body: eventData
 			}
-		}
+		};
 		const res = await this.postEvent(event);
         
 		if(!res.Success)

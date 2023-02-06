@@ -16,7 +16,8 @@ export class UserEvent extends EventResult
 	 * Validate the AddonBlockName and Description belong to a UserEvent.
 	 * @param data {EventResponseUserEvent} - The data to validate.
 	 */
-	protected validateUserEvent(data: EventResponseUserEvent) {
+	protected validateUserEvent(data: EventResponseUserEvent) 
+	{
 		let errorMessage = "";
 		if (data.Value.Data.AddonBlockName !== ADDON_BLOCK_NAME) 
 		{
@@ -35,12 +36,12 @@ export class UserEvent extends EventResult
 	
 	get eventData() 
 	{
-		return this.data.Value.Data.HostObject.pageParams.userEventData
+		return this.data.Value.Data.HostObject.pageParams.userEventData;
 	}
 
 	get userEventName() 
 	{
-		return this.data.Value.Data.HostObject.pageParams.userEventName
+		return this.data.Value.Data.HostObject.pageParams.userEventName;
 	}
 
 	get eventType() 
@@ -54,7 +55,7 @@ export class UserEvent extends EventResult
 	 */
 	public async setEmptyResult(): Promise<EventResult>
 	{
-		return await this.setResult({})
+		return await this.setResult({});
 	}
 
 	public async setResult(resultToSet: UserEventExecutionResult): Promise<EventResult>;

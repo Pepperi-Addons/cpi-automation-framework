@@ -15,7 +15,7 @@ export class EventResult
     */
 	get eventData() 
 	{
-		return this.data.Value.Data
+		return this.data.Value.Data;
 	}
 
 	/**
@@ -24,7 +24,7 @@ export class EventResult
     */
 	get eventCallback() 
 	{
-		return this.data.Value.Callback
+		return this.data.Value.Callback;
 	}
 
 	/**
@@ -33,7 +33,7 @@ export class EventResult
     */
 	get eventType() 
 	{
-		return this.data.Value.Type
+		return this.data.Value.Type;
 	}
 
 	//#endregion
@@ -178,7 +178,7 @@ export class EventResult
 			{
 				EventKey: this.data.Value.Callback,
 				EventData: resultToSet
-			}
+			};
 
 		return await this.eventsService.emitEvent(res);
 	}
@@ -209,7 +209,7 @@ export class EventResult
 			value &&
 			typeof value.EventKey === 'string' &&
 			"EventData" in value
-		)
+		);
 	}
 
 	//#endregion

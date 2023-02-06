@@ -12,7 +12,7 @@ export class ClientActionModal extends EventResult
 	
 	get eventData() 
 	{
-		return this.data.Value.Data
+		return this.data.Value.Data;
 	}
 
 	public async setResult(resultToSet: ModalActionExecutionResult): Promise<EventResult>;

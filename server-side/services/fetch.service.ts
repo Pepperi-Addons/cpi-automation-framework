@@ -17,7 +17,7 @@ export default class FetchService
 		const mergedHeaders = {
 			...headers,
 			"Content-Type": "application/json",
-		}
+		};
 		const fetchResult = await fetch(url, {
 			method: "POST",
 			body: bodyStr,
@@ -28,7 +28,7 @@ export default class FetchService
 
 		try
 		{
-			return JSON.parse(buff.toString())
+			return JSON.parse(buff.toString());
 		}
 		catch (err) 
 		{

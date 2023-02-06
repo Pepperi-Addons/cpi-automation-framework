@@ -10,18 +10,18 @@ export default class SurveyBuilderTest
 
 	public async test()
 	{
-        // Register to user events.
+		// Register to user events.
 		const initialEventsService = new EventsService(this.client);
 		const userEvents = ["OnSurveyDataLoad", "OnSurveyViewLoad"];
 
 		await initialEventsService.registerToUserEvents(userEvents);
 
-        const initialEventBody: Event = {
+		const initialEventBody: Event = {
 			EventKey: "OnClientSurveyLoad",
 			EventData: {
 				"SurveyKey": "05456092-08e4-40fd-8584-f6eb0c365e28"
 			}
-		}
+		};
 
 		// Emit "OnClientSurveyLoad" event, expecting "OnSurveyDataLoad" user event
 		const clientAction = await initialEventsService.emitEvent(initialEventBody);
@@ -36,7 +36,7 @@ export default class SurveyBuilderTest
 
 		const thirdUserEvent = (await secondDialog.selectActionK(0)).as("UserEvent");
 		console.log(thirdUserEvent.eventType);
-        console.log(JSON.stringify(thirdUserEvent.eventData));
+		console.log(JSON.stringify(thirdUserEvent.eventData));
 
 		const finish = await (await thirdUserEvent.setEmptyResult()).as("Finish");
 		console.log(finish.eventType);

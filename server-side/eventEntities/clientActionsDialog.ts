@@ -12,7 +12,7 @@ export class ClientActionDialog extends EventResult
 	
 	get eventData() 
 	{
-		return this.data.Value.Data
+		return this.data.Value.Data;
 	}
 
 	/**

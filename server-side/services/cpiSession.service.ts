@@ -62,7 +62,7 @@ export default class CpiSessionService
 		// Use maxNumberOfAttempts to stop after too long an attempt to create a session.
 		while(!accessToken && counter < maxNumberOfAttempts)
 		{
-			const res = await this.fetchService.post(url, body)
+			const res = await this.fetchService.post(url, body);
 			accessToken = res["AccessToken"];
 
 			// Sleep for 2 secs, to not make too many calls.
