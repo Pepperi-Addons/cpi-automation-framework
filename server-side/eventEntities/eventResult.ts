@@ -40,14 +40,67 @@ export class EventResult
 
 	//#region as method overloading
 
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: 'Dialog'): ClientActionDialog;
+
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: "GeoLocation"): ClientActionGeoLocation;
+
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: 'HUD'): ClientActionHUD;
+
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: 'Modal'): ClientActionModal;
+
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: 'Barcode'): ClientActionBarcodeScan;
+
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: 'Navigation'): ClientActionNavigation;
+
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: 'UserEvent'): UserEvent;
+
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: 'Finish'): FinishEvent;
+		
+	/**
+    The as method is used to cast an EventResult object to a specific ClientAction type or UserEvent type.
+    @param {ClientActionType | string} type - The type of ClientAction or UserEvent to cast the EventResult object to.
+    @return {EventResult} An instance of the specified ClientAction or UserEvent type.
+    */
 	as(type: string): EventResult;
 
 	/**
